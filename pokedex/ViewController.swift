@@ -13,11 +13,15 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     @IBOutlet weak var collection: UICollectionView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var musicBtn:UIButton!
     
     var pokemon = [Pokemon]()
     var filteredPokemon = [Pokemon]()
     var musicplayer: AVAudioPlayer!
     var inSearchMode = false
+    final var stopPlay = CGFloat(0.2)
+    final var playing = CGFloat(1.0)
+    var currentAlpha:CGFloat?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +32,10 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         searchBar.returnKeyType = UIReturnKeyType.Done // Change the wording on the keyboard from search to done
         parsePokemonCSV()
         initAudion()
+        
+        if let c = currentAlpha where c > 0.0{
+            musicBtn.alpha = c
+        }
     }
     
     func initAudion(){
@@ -117,10 +125,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         if musicplayer.playing{
             musicplayer.stop()
-            sender.alpha = 0.2
+            sender.alpha = stopPlay
+            currentAlpha = stopPlay
+            
         }else{
             musicplayer.play()
-            sender.alpha = 1.0
+            sender.alpha = playing
+            currentAlpha = playing
         }
         
     }
@@ -151,9 +162,22 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 if let poke = sender as? Pokemon{
                     detailsVC.pokemon = poke
                     detailsVC.audio = musicplayer
+                    detailsVC.currentAlpha = currentAlpha
                 }
             }
         }
     }
+    
+    // this get the alpha level of the music button at pokemonVC and set the music button in viewcontroller to the value
+    @IBAction func unwindToMain(segue: UIStoryboardSegue){
+        if segue.identifier == "goBack"{
+            if let detailVC = segue.sourceViewController as? PokemonDetailVC {
+                currentAlpha = detailVC.currentAlpha
+                musicBtn.alpha = currentAlpha!
+            }
+        }
+    }
+    
+   
 }
 

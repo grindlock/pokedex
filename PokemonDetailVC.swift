@@ -13,7 +13,9 @@ class PokemonDetailVC: UIViewController {
     
     var pokemon: Pokemon!
     var audio: AVAudioPlayer!
+    var currentAlpha:CGFloat!
     
+    @IBOutlet weak var musicBtn:UIButton!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var mainImg: UIImageView!
     @IBOutlet weak var descriptionLbl: UILabel!
@@ -33,6 +35,10 @@ class PokemonDetailVC: UIViewController {
         let img = UIImage(named: "\(pokemon.pokedexId)")
         mainImg.image = img
         currentEvoImg.image = img
+        
+        if let c = currentAlpha where c > 0.0{
+        musicBtn.alpha = c
+        }
         
         pokemon.downloadPokemonDetails { () -> () in
             //this will be called after download is done
@@ -66,7 +72,7 @@ class PokemonDetailVC: UIViewController {
     }
     
     @IBAction func backBtnPressed(sender: AnyObject) {
-        dismissViewControllerAnimated(true, completion: nil)
+       // dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func musicBtnPressed(sender: UIButton!) {
@@ -74,10 +80,15 @@ class PokemonDetailVC: UIViewController {
         if audio.playing{
             audio.stop()
             sender.alpha = 0.2
+            currentAlpha = 0.2
         }else{
             audio.play()
             sender.alpha = 1.0
+            currentAlpha = 1.0
+
         }
         
     }
+    
+    
 }
